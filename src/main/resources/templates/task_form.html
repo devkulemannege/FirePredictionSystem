@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppEEARS Task Submission - Forest Fire Prediction</title>
+    <style>
+        :root {
+            --primary-color: #d32f2f;
+            --primary-hover: #b71c1c;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #212529;
+            --text-muted: #495057;
+            --border-color: #ced4da;
+            --token-bg: #f5e8e8;
+            --token-text: #7d2e2e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            max-width: 650px;
+            width: 90%;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #b71c1c;
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        /* Token Display Box */
+        .token-container {
+            background-color: var(--token-bg);
+            border: 1px solid #c8e6c9;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 30px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .token-label {
+            font-weight: 600;
+            color: #5e1b1b;
+        }
+
+        .token-value {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            color: var(--token-text);
+            word-break: break-all;
+            margin-left: 10px;
+        }
+
+        /* Form Layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-main);
+        }
+
+        .input-group input {
+            padding: 10px 12px;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.15s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.15);
+        }
+
+        /* Submit Button Styling */
+        .submit-btn {
+            display: block;
+            width: 100%;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.99);
+        }
+
+        .submit-btn.loading {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Configure AppEEARS Point Extraction</h1>
+    <p class="subtitle">Define your target site configuration below. Submitted points will be used for fire prediction calculations.</p>
+
+    <div class="token-container">
+        <span class="token-label" id="accessTokenLabel">Your AppEEARS Access Token:</span>
+        <span class="token-value" id="accessTokenDisplay">Not Authorized (Please log in)</span>
+    </div>
+
+    <form id="appeearsForm" onsubmit="handleFormSubmit(event)">
+        <div class="form-grid">
+
+            <div class="input-group full-width">
+                <label for="taskName">Point Sample Task Name</label>
+                <input type="text" id="taskName" placeholder="e.g., point_tutorial_test" required>
+            </div>
+
+            <div class="input-group">
+                <label for="latitude">Latitude</label>
+                <input type="number" id="latitude" step="any" min="-90" max="90" placeholder="e.g., 36.206228" required>
+            </div>
+
+            <div class="input-group">
+                <label for="longitude">Longitude</label>
+                <input type="number" id="longitude" step="any" min="-180" max="180" placeholder="e.g., -112.127134" required>
+            </div>
+
+            <div class="input-group">
+                <label for="startDate">Start Date</label>
+                <input type="date" id="startDate" required>
+            </div>
+
+            <div class="input-group">
+                <label for="endDate">End Date</label>
+                <input type="date" id="endDate" required>
+            </div>
+
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Submit Data</button>
+    </form>
+</div>
+
+<script>
+    // convert from (YYYY-MM-DD) to (MM-DD-YYYY)
+    function reformatDate(dateString) {
+        const [year, month, day] = dateString.split('-');
+        return `${month}-${day}-${year}`;
+    }
+
+    // Call this execution function when your authorization engine hands back the Bearer Token
+    async function updateAccessToken() {
+        const displayElement = document.getElementById('accessTokenDisplay');
+        const displayElementLabel = document.getElementById("accessTokenLabel");
+        let displayValue = "Not Authorized or Unable to Authorize";
+
+        try {
+            const response = await fetch("/get_token", {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({request: "request"})
+            })
+
+            if (response.ok){
+                const data = await response.json();
+                displayValue = data.accessToken.toString(); // display retrieved token
+
+                // adjust colors of div and elements to reflect "success"
+                displayElement.parentElement.style.backgroundColor = "#e8f5e9";
+                displayElementLabel.style.color = "#1b5e20"
+                displayElement.style.color = "#2e7d32";
+            } else {
+                alert("An error occurred while trying to retrieve access token.")
+                displayElement.textContent = displayValue;
+            }
+        } catch (error) {
+            alert("An error occurred while trying to retrieve access token.")
+        } finally {
+            displayElement.textContent = displayValue;
+        }
+    }
+
+    async function handleFormSubmit(event) {
+        event.preventDefault(); // disable default submit flow of form
+
+        const btn = document.getElementById('submitBtn');
+        btn.classList.add('loading');
+        btn.textContent = 'Sending Data...';
+
+        // Extract native values from the form
+        const taskName = document.getElementById('taskName').value.trim();
+        const lat = parseFloat(document.getElementById('latitude').value);
+        const lng = parseFloat(document.getElementById('longitude').value);
+        const rawStart = document.getElementById('startDate').value;
+        const rawEnd = document.getElementById('endDate').value;
+
+        try {
+            // send retrieved form data to the backend
+            const response = await fetch('/submit_appeears_task', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    taskName: taskName,
+                    latitude: lat,
+                    longitude: lng,
+                    startDate: reformatDate(rawStart),
+                    endDate: reformatDate(rawEnd)
+                })
+            });
+
+            if (response.ok) {
+                alert('AppEEARS compilation request successfully sent to backend workflow!');
+            } else {
+                alert('Backend submission error tracking failed processing check.');
+            }
+        } catch (error) {
+            console.error("Transmission Failure:", error);
+            alert('Failed to establish contact with local background route pipeline.');
+        } finally {
+            btn.classList.remove('loading');
+            btn.textContent = 'Submit Data';
+        }
+    }
+
+    // call function to retrieve access token to the front end
+    updateAccessToken();
+</script>
+
+</body>
+</html>

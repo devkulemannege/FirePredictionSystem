@@ -182,7 +182,7 @@
     <div class="info-section">
         <div class="info-item">
             <div class="info-title">Predictive Data Retrieval</div>
-            <p class="info-text">Clicking the button below securely passes your credentials to NASA AppEEARS to request the critical point-sample variables (such as fuel moisture, LST, and vegetation health indices) needed for the fire prediction model.</p>
+            <p class="info-text">Clicking the button below securely passes your credentials to NASA AppEEARS to request the critical point-sample variables (such as Land Surface Temperature and vegetation health indices) needed for the fire prediction model. <b>Your credentials will not be stored.</b></p>
         </div>
 
         <div class="info-item">
@@ -232,7 +232,7 @@
         btn.classList.add('loading');
         btn.textContent = 'Fetching Environmental Data...';
 
-        console.log("Initiating AppEEARS request for predictive fire metrics...");
+        console.log("Initiating AppEEARS access token request");
 
         try {
             // Request data from your backend route, passing credentials along
@@ -249,7 +249,7 @@
 
             if (reply.ok) {
                 const data = await reply.json();
-                alert('Environmental data successfully requested!');
+                window.location.href = "/task_form"; // go to web page with the point extraction form
             } else {
                 alert('Failed to contact server. Please check credentials or backend status.');
             }
