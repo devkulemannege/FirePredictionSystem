@@ -238,9 +238,7 @@
             // Request data from your backend route, passing credentials along
             const reply = await fetch('/request_api_data', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ // send username and password through json
                     username: username,
                     password: password
@@ -248,7 +246,6 @@
             });
 
             if (reply.ok) {
-                const data = await reply.json();
                 window.location.href = "/task_form"; // go to web page with the point extraction form
             } else {
                 alert('Failed to contact server. Please check credentials or backend status.');

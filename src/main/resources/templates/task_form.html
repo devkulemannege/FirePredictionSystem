@@ -213,11 +213,7 @@
         let displayValue = "Not Authorized or Unable to Authorize";
 
         try {
-            const response = await fetch("/get_token", {
-                method: "POST",
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({request: "request"})
-            })
+            const response = await fetch("/get_token"); // retrieve token from backend
 
             if (response.ok){
                 const data = await response.json();
@@ -279,7 +275,6 @@
             btn.textContent = 'Submit Data';
         }
     }
-
     // call function to retrieve access token to the front end
     updateAccessToken();
 </script>

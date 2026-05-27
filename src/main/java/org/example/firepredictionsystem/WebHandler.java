@@ -26,7 +26,7 @@ public class WebHandler {
 
     @PostMapping("/request_api_data")
     @ResponseBody
-    public HashMap<String, String> request_api_data(@RequestBody HashMap<String, String> user) {
+    public void request_api_data(@RequestBody HashMap<String, String> user) {
         /* initialize connection with AppEEARS and retrieve usable access token */
 //        this.accessToken = client.post()
 //                .uri(String.format("%slogin", api))
@@ -39,23 +39,22 @@ public class WebHandler {
 
         HashMap<String, String> reply = new HashMap<>();
         reply.put("response", "successful"); // return access token to the front end
-        return reply;
     }
 
-    @PostMapping("/get_token")
+    @GetMapping("/get_token")
     @ResponseBody
-    public HashMap<String, String> get_token(@RequestBody HashMap<String, String> request) {
+    public HashMap<String, String> get_token() {
         /* send access token to the front end when required */
-        HashMap<String, String> token = new HashMap<>(); token.put("accessToken", this.accessToken);
+        HashMap<String, String> token = new HashMap<>();
+        token.put("accessToken", this.accessToken);
         return token;
     }
 
     @PostMapping("/submit_appeears_task")
     @ResponseBody
-    public HashMap<String, String> submit_appeears_task(@RequestBody HashMap<String, String> request) {
+    public void submit_appeears_task(@RequestBody HashMap<String, String> request) {
         /* format JSON request into applicable format and sent to AppEEARs for requesting for data */
         // TODO: complete method
-        return request;
     }
 }
 
