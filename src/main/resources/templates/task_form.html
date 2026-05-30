@@ -183,14 +183,9 @@
                 <input type="number" id="longitude" step="any" min="-180" max="180" placeholder="e.g., -112.127134" required>
             </div>
 
-            <div class="input-group">
-                <label for="startDate">Start Date</label>
-                <input type="date" id="startDate" required>
-            </div>
-
-            <div class="input-group">
-                <label for="endDate">End Date</label>
-                <input type="date" id="endDate" required>
+            <div class="input-group full-width">
+                <label for="targetDate">Target Date</label>
+                <input type="date" id="targetDate" required>
             </div>
 
         </div>
@@ -217,7 +212,7 @@
 
             if (response.ok){
                 const data = await response.json();
-                displayValue = data.accessToken.toString(); // display retrieved token
+                displayValue = data.token; // display retrieved token
 
                 // adjust colors of div and elements to reflect "success"
                 displayElement.parentElement.style.backgroundColor = "#e8f5e9";
@@ -226,9 +221,12 @@
             } else {
                 alert("An error occurred while trying to retrieve access token.")
                 displayElement.textContent = displayValue;
+                window.location.href = "/";
             }
         } catch (error) {
-            alert("An error occurred while trying to retrieve access token.")
+            alert("An error occurred while trying to retrieve access token")
+            console.error("Connection Failure:", error);
+            window.location.href = "/";
         } finally {
             displayElement.textContent = displayValue;
         }
@@ -245,20 +243,18 @@
         const taskName = document.getElementById('taskName').value.trim();
         const lat = parseFloat(document.getElementById('latitude').value);
         const lng = parseFloat(document.getElementById('longitude').value);
-        const rawStart = document.getElementById('startDate').value;
-        const rawEnd = document.getElementById('endDate').value;
+        const rawDate = document.getElementById('targetDate').value;
 
         try {
             // send retrieved form data to the backend
-            const response = await fetch('/submit_appeears_task', {
+            const response = await fetch('/submit_task', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     taskName: taskName,
                     latitude: lat,
                     longitude: lng,
-                    startDate: reformatDate(rawStart),
-                    endDate: reformatDate(rawEnd)
+                    date: reformatDate(rawDate)
                 })
             });
 
