@@ -15,6 +15,11 @@
             --border-color: #ced4da;
             --token-bg: #f5e8e8;
             --token-text: #7d2e2e;
+
+            /* Success State Theme Variables */
+            --success-color: #2e7d32;
+            --success-bg: #e8f5e9;
+            --success-border: #c8e6c9;
         }
 
         body {
@@ -57,7 +62,7 @@
         /* Token Display Box */
         .token-container {
             background-color: var(--token-bg);
-            border: 1px solid #c8e6c9;
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             padding: 12px 16px;
             margin-bottom: 30px;
@@ -65,6 +70,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all 0.3s ease;
         }
 
         .token-label {
@@ -152,6 +158,112 @@
             cursor: not-allowed;
             pointer-events: none;
         }
+
+        /* ========================================================
+           POPUP MODAL DESIGN SYSTEM
+           ======================================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background-color: var(--card-bg);
+            padding: 32px;
+            border-radius: 10px;
+            max-width: 450px;
+            width: 85%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            transform: scale(0.95) translateY(15px);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 16px auto;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .modal-message {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .modal-close-btn {
+            color: #ffffff;
+            border: none;
+            padding: 10px 28px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        /* Success variant modifications */
+        .modal-box.success-variant .modal-icon {
+            background-color: var(--success-bg);
+            color: var(--success-color);
+        }
+        .modal-box.success-variant .modal-title {
+            color: var(--success-color);
+        }
+        .modal-box.success-variant .modal-close-btn {
+            background-color: var(--success-color);
+        }
+        .modal-box.success-variant .modal-close-btn:hover {
+            background-color: #1b5e20;
+        }
+
+        /* Error variant modifications */
+        .modal-box.error-variant .modal-icon {
+            background-color: #fde8e8;
+            color: var(--primary-color);
+        }
+        .modal-box.error-variant .modal-title {
+            color: var(--primary-color);
+        }
+        .modal-box.error-variant .modal-close-btn {
+            background-color: var(--primary-color);
+        }
+        .modal-box.error-variant .modal-close-btn:hover {
+            background-color: var(--primary-hover);
+        }
     </style>
 </head>
 <body>
@@ -160,7 +272,7 @@
     <h1>Configure AppEEARS Point Extraction</h1>
     <p class="subtitle">Define your target site configuration below. Submitted points will be used for fire prediction calculations.</p>
 
-    <div class="token-container">
+    <div class="token-container" id="tokenBox">
         <span class="token-label" id="accessTokenLabel">Your AppEEARS Access Token:</span>
         <span class="token-value" id="accessTokenDisplay">Not Authorized (Please log in)</span>
     </div>
@@ -194,7 +306,47 @@
     </form>
 </div>
 
+<div class="modal-overlay" id="statusModal">
+    <div class="modal-box" id="modalBox">
+        <div class="modal-icon" id="modalIcon">!</div>
+        <div class="modal-title" id="modalTitle">Notification Status</div>
+        <div class="modal-message" id="modalMessage">Notification descriptive contextual feedback text placeholder.</div>
+        <button class="modal-close-btn" onclick="dismissModal()">Dismiss</button>
+    </div>
+</div>
+
 <script>
+    // Holds the URL to jump to after a modal button click happens
+    let structuralRedirectTargetUrl = null;
+
+    // Custom non-blocking pop-up engine replacement for default alerts
+    function presentStatusModal(title, message, visualVariant = 'error', postCloseRoute = null) {
+        const overlay = document.getElementById('statusModal');
+        const box = document.getElementById('modalBox');
+        const titleElem = document.getElementById('modalTitle');
+        const msgElem = document.getElementById('modalMessage');
+        const iconElem = document.getElementById('modalIcon');
+
+        structuralRedirectTargetUrl = postCloseRoute;
+
+        titleElem.textContent = title;
+        msgElem.textContent = message;
+        iconElem.textContent = (visualVariant === 'success') ? '✓' : '!';
+
+        // Clear and swap behavioral flavors
+        box.classList.remove('success-variant', 'error-variant');
+        box.classList.add(`${visualVariant}-variant`);
+
+        overlay.classList.add('active');
+    }
+
+    function dismissModal() {
+        document.getElementById('statusModal').classList.remove('active');
+        if (structuralRedirectTargetUrl) {
+            window.location.href = structuralRedirectTargetUrl;
+        }
+    }
+
     // convert from (YYYY-MM-DD) to (MM-DD-YYYY)
     function reformatDate(dateString) {
         const [year, month, day] = dateString.split('-');
@@ -205,6 +357,7 @@
     async function updateAccessToken() {
         const displayElement = document.getElementById('accessTokenDisplay');
         const displayElementLabel = document.getElementById("accessTokenLabel");
+        const tokenBox = document.getElementById('tokenBox');
         let displayValue = "Not Authorized or Unable to Authorize";
 
         try {
@@ -214,19 +367,38 @@
                 const data = await response.json();
                 displayValue = data.token; // display retrieved token
 
-                // adjust colors of div and elements to reflect "success"
-                displayElement.parentElement.style.backgroundColor = "#e8f5e9";
-                displayElementLabel.style.color = "#1b5e20"
-                displayElement.style.color = "#2e7d32";
+                if (displayValue !== "unauthorized"){
+                    // adjust colors of div and elements to reflect "success"
+                    tokenBox.style.backgroundColor = "var(--success-bg)";
+                    tokenBox.style.borderColor = "var(--success-border)";
+                    displayElementLabel.style.color = "#1b5e20"
+                    displayElement.style.color = "var(--success-color)";
+                } else {
+                    displayElement.textContent = displayValue;
+                    presentStatusModal(
+                        "Authentication Failed",
+                        "Invalid client credentials provided. Dismiss to navigate to previous page.",
+                        "error",
+                        "/"
+                    );
+                }
             } else {
-                alert("An error occurred while trying to retrieve access token.")
                 displayElement.textContent = displayValue;
-                window.location.href = "/";
+                presentStatusModal(
+                    "Authentication Failed",
+                    "An unexpected error occurred. Please try again.",
+                    "error",
+                    "/"
+                );
             }
         } catch (error) {
-            alert("An error occurred while trying to retrieve access token")
             console.error("Connection Failure:", error);
-            window.location.href = "/";
+            presentStatusModal(
+                "Connection Error",
+                "An unexpected error occurred. Please try again.",
+                "error",
+                "/"
+            );
         } finally {
             displayElement.textContent = displayValue;
         }
@@ -247,7 +419,7 @@
 
         try {
             // send retrieved form data to the backend
-            const response = await fetch('/submit_task', {
+            const response = await fetch('/prepare_task', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -259,13 +431,34 @@
             });
 
             if (response.ok) {
-                alert('AppEEARS compilation request successfully sent to backend workflow!');
+                const data = await response.json();
+
+                if (data.status === "success") {
+                    window.location.href = "/success_page";
+                } else if (data.status === "fail") {
+                    window.location.href = "/fail_page";
+                } else {
+                    presentStatusModal(
+                        "Pipeline Interrupted",
+                        "An unexpected error occurred. Please try again.",
+                        "error"
+                    );
+                }
             } else {
-                alert('Backend submission error tracking failed processing check.');
+                presentStatusModal(
+                    "Submission Error",
+                    "An unexpected error occurred. Please try again.",
+                    "error"
+                );
             }
+
         } catch (error) {
             console.error("Transmission Failure:", error);
-            alert('Failed to establish contact with local background route pipeline.');
+            presentStatusModal(
+                "Pipeline Interrupted",
+                "An unexpected error occurred. Please try again.",
+                "error"
+            );
         } finally {
             btn.classList.remove('loading');
             btn.textContent = 'Submit Data';

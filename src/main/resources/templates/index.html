@@ -120,6 +120,15 @@
             box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.15);
         }
 
+        /* Helper notation styling underneath the target inputs */
+        .input-helper {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 5px;
+            display: block;
+            line-height: 1.4;
+        }
+
         /* The Simplistic Button */
         .retrieve-btn {
             display: block;
@@ -172,13 +181,11 @@
 <body>
 
 <div class="container">
-    <!-- New Title and Purpose Subtitle -->
     <h1>Welcome to the Forest Fire Prediction Portal</h1>
     <p class="subtitle">Generate localized wildfire risk and predictive forecasts for your selected coordinate point using historical and real-time NASA environmental data layers.</p>
 
     <hr>
 
-    <!-- Purpose-Driven Descriptions -->
     <div class="info-section">
         <div class="info-item">
             <div class="info-title">Predictive Data Retrieval</div>
@@ -191,7 +198,6 @@
         </div>
     </div>
 
-    <!-- Authentication Input Fields (Required) -->
     <div class="auth-section">
         <div class="input-group">
             <label for="username">AppEEARS Username</label>
@@ -201,9 +207,13 @@
             <label for="password">AppEEARS Password</label>
             <input type="password" id="password" placeholder="Enter Earthdata password" oninput="validateForm()" required>
         </div>
+        <div class="input-group">
+            <label for="email">Notification Email</label>
+            <input type="email" id="email" placeholder="e.g., user@example.com" required>
+            <span class="input-helper">The final wildfire risk report and predictive outputs will be delivered directly to this email address once background computation wraps up.</span>
+        </div>
     </div>
 
-    <!-- The Simplistic Button (Disabled by default) -->
     <button class="retrieve-btn" id="retrieveBtn" onclick="handleRetrieveData()" disabled>Retrieve Data</button>
 </div>
 
@@ -212,10 +222,11 @@
     function validateForm() {
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();
+        const email = document.getElementById('email').value.trim();
         const btn = document.getElementById('retrieveBtn');
 
         // Note: HTML button uses 'disabled', not 'enabled' attribute
-        if (username !== "" && password !== "") {
+        if (username !== "" && password !== "" && email !== "") {
             btn.removeAttribute('disabled');
         } else {
             btn.setAttribute('disabled', 'true');
@@ -227,6 +238,7 @@
         const btn = document.getElementById('retrieveBtn');
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();
+        const email = document.getElementById('email').value.trim();
 
         // Add loading state
         btn.classList.add('loading');
@@ -241,7 +253,8 @@
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ // send username and password through json
                     username: username,
-                    password: password
+                    password: password,
+                    email: email
                 })
             });
 

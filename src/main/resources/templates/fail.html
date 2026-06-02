@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Failed - Forest Fire Prediction Tool</title>
+    <style>
+        :root {
+            /* Consistent structural color palette */
+            --primary-color: #d32f2f;
+            --primary-hover: #b71c1c;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #212529;
+            --text-muted: #495057;
+            --border-color: #ced4da;
+
+            /* Error/Failure State Theme Variables */
+            --error-color: #d32f2f;
+            --error-bg: #fde8e8;
+            --error-border: #f8b4b4;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 50px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            max-width: 550px;
+            width: 90%;
+            text-align: center;
+        }
+
+        /* SVG Cross Animation Container */
+        .cross-wrapper {
+            height: 80px;
+            margin: 0 auto 25px auto;
+            display: block;
+        }
+
+        .cross-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* The circle wrapper around the cross */
+        .cross-circle {
+            stroke: var(--error-color);
+            stroke-width: 4;
+            stroke-miterlimit: 10;
+            fill: none;
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            animation: draw-circle 0.6s cubic-bezier(0.39, 0.575, 0.565, 1) forwards;
+        }
+
+        /* The lines making up the error cross */
+        .cross-line {
+            transform-origin: 50% 50%;
+            stroke: var(--error-color);
+            stroke-width: 5;
+            stroke-linecap: round;
+            fill: none;
+            stroke-dasharray: 40;
+            stroke-dashoffset: 40;
+        }
+
+        .line-1 {
+            animation: draw-cross-line 0.25s cubic-bezier(0.65, 0, 0.45, 1) 0.5s forwards,
+            scale-bounce 0.4s ease-in-out 0.9s;
+        }
+
+        .line-2 {
+            animation: draw-cross-line 0.25s cubic-bezier(0.65, 0, 0.45, 1) 0.65s forwards,
+            scale-bounce 0.4s ease-in-out 0.9s;
+        }
+
+        h1 {
+            font-size: 26px;
+            color: var(--error-color);
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background-color: var(--error-bg);
+            color: var(--error-color);
+            border: 1px solid var(--error-border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .description {
+            font-size: 15px;
+            color: var(--text-main);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* Highlight notation display card */
+        .notice-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            padding: 16px;
+            border-radius: 0 6px 6px 0;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .notice-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .notice-text {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: #e9ecef;
+            margin: 25px 0;
+        }
+
+        /* Redirect Control Links */
+        .action-btn {
+            display: block;
+            width: 100%;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border: none;
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+
+        .action-btn:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-btn:active {
+            transform: scale(0.99);
+        }
+
+        /* ========================================================
+           PURE CSS SVG ANIMATION KEYFRAMES
+           ======================================================== */
+        @keyframes draw-circle {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes draw-cross-line {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes scale-bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.12);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Animated SVG Cross -->
+    <div class="cross-wrapper">
+        <svg class="cross-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="cross-circle" cx="26" cy="26" r="24" fill="none"/>
+            <path class="cross-line line-1" fill="none" d="M16 16l20 20"/>
+            <path class="cross-line line-2" fill="none" d="M36 16L16 36"/>
+        </svg>
+    </div>
+
+    <span class="status-badge">Pipeline Interrupted</span>
+    <h1>Prediction Request Failed</h1>
+
+    <p class="description">
+        Your prediction request could not be completed because an error occurred during submission. The processing server was unable to register your target parameters onto the active data stream.
+    </p>
+
+    <div class="notice-box">
+        <div class="notice-title">Diagnostic Note</div>
+        <p class="notice-text">
+            This issue is typically caused by unverified AppEEARS credential hashes, invalid coordinate bounding limits, or temporary API rate limits on NASA's geospatial environmental servers. No background extraction tasks were generated.
+        </p>
+    </div>
+
+    <hr>
+
+    <a href="/task_form" class="action-btn">Return and Fix Configuration</a>
+</div>
+
+</body>
+</html>
