@@ -41,7 +41,7 @@ public class TaskHandler {
             taskReply = client.post()
                     .uri(String.format("%stask", api))
                     .headers(httpHeaders -> {
-                        httpHeaders.setBearerAuth(tokenInJson.get("token").toString()); // use auth-token intead of usr & psw
+                        httpHeaders.setBearerAuth(tokenInJson.get("token").toString()); // use auth-token intsead of usr & psw
                         httpHeaders.set("content-type", "application/json");
                     })
                     .body(taskPayload)

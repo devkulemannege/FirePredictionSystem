@@ -4,22 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AppEEARS Task Submission - Forest Fire Prediction</title>
+    <link rel="stylesheet" href="static/global.css">
     <style>
         :root {
-            --primary-color: #d32f2f;
-            --primary-hover: #b71c1c;
-            --bg-color: #f4f6f9;
-            --card-bg: #ffffff;
-            --text-main: #212529;
-            --text-muted: #495057;
-            --border-color: #ced4da;
-            --token-bg: #f5e8e8;
-            --token-text: #7d2e2e;
+            --bg-color: #0b0c10;
+            --card-bg: #11141a;
+            --primary-color: #ff3333;
+            --primary-hover: #ff0000;
+            --text-main: #f1f3f5;
+            --text-muted: #a6b0c0;
+            --border-color: #262d38;
+            --disabled-color: #4a5568;
+            --disabled-bg: #1a202c;
 
-            /* Success State Theme Variables */
-            --success-color: #2e7d32;
-            --success-bg: #e8f5e9;
-            --success-border: #c8e6c9;
+            --token-bg: #1a1616;
+            --token-text: #ff6666;
+
+            --success-color: #4caf50;
+            --success-bg: #101f11;
+            --success-border: #1b4d22;
         }
 
         body {
@@ -33,23 +36,28 @@
             align-items: center;
             min-height: 100vh;
             box-sizing: border-box;
+            position: relative;
+            overflow-x: hidden;
         }
 
         .container {
             background-color: var(--card-bg);
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
             max-width: 650px;
             width: 90%;
+            box-sizing: border-box;
         }
 
         h1 {
             font-size: 24px;
-            color: #b71c1c;
+            color: var(--primary-color);
             margin-top: 0;
             margin-bottom: 8px;
             font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         .subtitle {
@@ -59,23 +67,41 @@
             line-height: 1.5;
         }
 
-        /* Token Display Box */
         .token-container {
             background-color: var(--token-bg);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             padding: 12px 16px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-size: 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.3s ease;
+            box-sizing: border-box;
         }
 
         .token-label {
             font-weight: 600;
-            color: #5e1b1b;
+            color: #d88c8c;
+            flex-shrink: 0;
+            width: 25%;
+        }
+
+        .token-wrapper-interactive {
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 4px;
+            padding: 2px 6px;
+            margin-left: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-end;
+            max-width: 75%;
+        }
+
+        .token-wrapper-interactive:hover {
+            background-color: rgba(255, 255, 255, 0.03);
         }
 
         .token-value {
@@ -83,10 +109,37 @@
             font-weight: bold;
             color: var(--token-text);
             word-break: break-all;
-            margin-left: 10px;
+            transition: filter 0.25s ease;
         }
 
-        /* Form Layout */
+        .token-value.is-blurred {
+            filter: blur(5px);
+            user-select: none;
+        }
+
+        .token-reveal-prompt {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #81c784;
+            background-color: rgba(16, 31, 17, 0.6);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .token-value.is-blurred + .token-reveal-prompt {
+            opacity: 1;
+        }
+
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -103,29 +156,121 @@
             flex-direction: column;
         }
 
+        .label-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
         .input-group label {
             font-size: 13px;
             font-weight: 600;
-            margin-bottom: 6px;
             color: var(--text-main);
+            margin: 0;
+        }
+
+        .tooltip-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tooltip-trigger {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #161b22;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: bold;
+            font-family: serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: help;
+            transition: all 0.15s ease-in-out;
+        }
+
+        .tooltip-trigger:hover {
+            background-color: #21262d;
+            color: var(--text-main);
+            border-color: #30363d;
+        }
+
+        .tooltip-box {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background-color: #161b22;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.4;
+            width: 240px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+            z-index: 50;
+            white-space: normal;
+            text-align: left;
+        }
+
+        .tooltip-box::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--border-color) transparent transparent transparent;
+        }
+
+        .tooltip-wrapper:hover .tooltip-box {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .input-description {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: -2px;
+            margin-bottom: 8px;
+            line-height: 1.4;
         }
 
         .input-group input {
             padding: 10px 12px;
             font-size: 14px;
+            background-color: #161b22;
+            color: var(--text-main);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             box-sizing: border-box;
-            transition: border-color 0.15s ease;
+            transition: all 0.15s ease-in-out;
+        }
+
+        .input-group input::placeholder {
+            color: #57606a;
         }
 
         .input-group input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.15);
+            background-color: #1c212c;
+            box-shadow: 0 0 0 3px rgba(255, 51, 51, 0.25);
         }
 
-        /* Submit Button Styling */
         .submit-btn {
             display: block;
             width: 100%;
@@ -137,7 +282,7 @@
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(255, 51, 51, 0.2);
             transition: all 0.2s ease;
             letter-spacing: 0.5px;
             text-align: center;
@@ -146,7 +291,7 @@
 
         .submit-btn:hover {
             background-color: var(--primary-hover);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 16px rgba(255, 51, 51, 0.35);
         }
 
         .submit-btn:active {
@@ -154,21 +299,20 @@
         }
 
         .submit-btn.loading {
-            background-color: #6c757d;
+            background-color: #2d3748;
+            color: #a0aec0;
             cursor: not-allowed;
             pointer-events: none;
+            box-shadow: none;
         }
 
-        /* ========================================================
-           POPUP MODAL DESIGN SYSTEM
-           ======================================================== */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.7);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -187,9 +331,10 @@
             background-color: var(--card-bg);
             padding: 32px;
             border-radius: 10px;
+            border: 1px solid var(--border-color);
             max-width: 450px;
             width: 85%;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
             text-align: center;
             transform: scale(0.95) translateY(15px);
             transition: transform 0.2s ease;
@@ -235,7 +380,9 @@
             transition: background-color 0.15s ease;
         }
 
-        /* Success variant modifications */
+        .modal-box.success-variant {
+            border-color: var(--success-border);
+        }
         .modal-box.success-variant .modal-icon {
             background-color: var(--success-bg);
             color: var(--success-color);
@@ -247,12 +394,11 @@
             background-color: var(--success-color);
         }
         .modal-box.success-variant .modal-close-btn:hover {
-            background-color: #1b5e20;
+            background-color: #2e7d32;
         }
 
-        /* Error variant modifications */
         .modal-box.error-variant .modal-icon {
-            background-color: #fde8e8;
+            background-color: rgba(255, 51, 51, 0.1);
             color: var(--primary-color);
         }
         .modal-box.error-variant .modal-title {
@@ -264,39 +410,97 @@
         .modal-box.error-variant .modal-close-btn:hover {
             background-color: var(--primary-hover);
         }
+
+        .attribution-footer {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            z-index: 100;
+            line-height: 1.5;
+        }
+
+        .attribution-copyright {
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .attribution-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .attribution-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.15s ease;
+        }
+
+        .attribution-links a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 650px) {
+            .attribution-footer {
+                position: static;
+                margin-top: 40px;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
+            .attribution-links {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Configure AppEEARS Point Extraction</h1>
-    <p class="subtitle">Define your target site configuration below. Submitted points will be used for fire prediction calculations.</p>
+    <h1>Configure AppEEARS Point Request</h1>
+    <p class="subtitle">Set your target location configuration below. Entered coordinates will be used for wildfire risk prediction.</p>
 
     <div class="token-container" id="tokenBox">
         <span class="token-label" id="accessTokenLabel">Your AppEEARS Access Token:</span>
-        <span class="token-value" id="accessTokenDisplay">Not Authorized (Please log in)</span>
+        <div class="token-wrapper-interactive" onclick="toggleTokenObfuscation()">
+            <span class="token-value" id="accessTokenDisplay">Not Authorized (Please log in)</span>
+            <span class="token-reveal-prompt" id="revealPrompt">Click to reveal token</span>
+        </div>
     </div>
 
     <form id="appeearsForm" onsubmit="handleFormSubmit(event)">
         <div class="form-grid">
 
             <div class="input-group full-width">
-                <label for="taskName">Point Sample Task Name</label>
-                <input type="text" id="taskName" placeholder="e.g., point_tutorial_test" required>
+                <div class="label-row">
+                    <label for="taskName">Point Request Task Name</label>
+                    <div class="tooltip-wrapper">
+                        <div class="tooltip-trigger">i</div>
+                        <div class="tooltip-box">The extraction process is officially referred to as a <b>point request task</b> within NASA AppEEARS.</div>
+                    </div>
+                </div>
+                <input type="text" id="taskName" placeholder="point_tutorial_test" required>
             </div>
 
             <div class="input-group">
-                <label for="latitude">Latitude</label>
+                <label for="latitude" style="margin-bottom: 5px">Latitude</label>
                 <input type="number" id="latitude" step="any" min="-90" max="90" placeholder="e.g., 36.206228" required>
             </div>
 
             <div class="input-group">
-                <label for="longitude">Longitude</label>
+                <label for="longitude" style="margin-bottom: 5px">Longitude</label>
                 <input type="number" id="longitude" step="any" min="-180" max="180" placeholder="e.g., -112.127134" required>
             </div>
 
             <div class="input-group full-width">
                 <label for="targetDate">Target Date</label>
+                <span class="input-description">Use today's date for real-time predictions, or select a past date to analyze historical risk scenarios.</span>
                 <input type="date" id="targetDate" required>
             </div>
 
@@ -315,11 +519,27 @@
     </div>
 </div>
 
-<script>
-    // Holds the URL to jump to after a modal button click happens
-    let structuralRedirectTargetUrl = null;
+<div class="attribution-footer">
+    <div class="attribution-copyright">&copy; 2026 Devpriya Kulemannege</div>
+    <div class="attribution-links">
+        <a href="https://www.linkedin.com/in/devkulemannege/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://github.com/devkulemannege" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="mailto:devkulamannage@gmail.com">Email</a>
+    </div>
+</div>
 
-    // Custom non-blocking pop-up engine replacement for default alerts
+<script>
+    let structuralRedirectTargetUrl = null;
+    let tokenVerificationSuccessState = false;
+
+    // Toggle blur visualization
+    function toggleTokenObfuscation() {
+        if (!tokenVerificationSuccessState) return;
+        const display = document.getElementById('accessTokenDisplay');
+        display.classList.toggle('is-blurred');
+    }
+
+    // Preset alert modal
     function presentStatusModal(title, message, visualVariant = 'error', postCloseRoute = null) {
         const overlay = document.getElementById('statusModal');
         const box = document.getElementById('modalBox');
@@ -333,7 +553,6 @@
         msgElem.textContent = message;
         iconElem.textContent = (visualVariant === 'success') ? '✓' : '!';
 
-        // Clear and swap behavioral flavors
         box.classList.remove('success-variant', 'error-variant');
         box.classList.add(`${visualVariant}-variant`);
 
@@ -347,13 +566,13 @@
         }
     }
 
-    // convert from (YYYY-MM-DD) to (MM-DD-YYYY)
+    // Convert from (YYYY-MM-DD) to (MM-DD-YYYY)
     function reformatDate(dateString) {
         const [year, month, day] = dateString.split('-');
         return `${month}-${day}-${year}`;
     }
 
-    // Call this execution function when your authorization engine hands back the Bearer Token
+    // Authorization processing script engine
     async function updateAccessToken() {
         const displayElement = document.getElementById('accessTokenDisplay');
         const displayElementLabel = document.getElementById("accessTokenLabel");
@@ -361,17 +580,20 @@
         let displayValue = "Not Authorized or Unable to Authorize";
 
         try {
-            const response = await fetch("/get_token"); // retrieve token from backend
+            const response = await fetch("/get_token");
 
             if (response.ok){
                 const data = await response.json();
-                displayValue = data.token; // display retrieved token
+                displayValue = data.token;
 
                 if (displayValue !== "unauthorized"){
-                    // adjust colors of div and elements to reflect "success"
+                    tokenVerificationSuccessState = true;
+                    displayElement.classList.add('is-blurred');
+
+                    // Adjust design profile to match clean successful token parameters
                     tokenBox.style.backgroundColor = "var(--success-bg)";
                     tokenBox.style.borderColor = "var(--success-border)";
-                    displayElementLabel.style.color = "#1b5e20"
+                    displayElementLabel.style.color = "#81c784";
                     displayElement.style.color = "var(--success-color)";
                 } else {
                     displayElement.textContent = displayValue;
@@ -405,20 +627,18 @@
     }
 
     async function handleFormSubmit(event) {
-        event.preventDefault(); // disable default submit flow of form
+        event.preventDefault();
 
         const btn = document.getElementById('submitBtn');
         btn.classList.add('loading');
         btn.textContent = 'Sending Data...';
 
-        // Extract native values from the form
         const taskName = document.getElementById('taskName').value.trim();
         const lat = parseFloat(document.getElementById('latitude').value);
         const lng = parseFloat(document.getElementById('longitude').value);
         const rawDate = document.getElementById('targetDate').value;
 
         try {
-            // send retrieved form data to the backend
             const response = await fetch('/prepare_task', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -464,7 +684,7 @@
             btn.textContent = 'Submit Data';
         }
     }
-    // call function to retrieve access token to the front end
+
     updateAccessToken();
 </script>
 

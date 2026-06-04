@@ -4,21 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Request Submitted - Forest Fire Prediction Tool</title>
+    <link rel="stylesheet" href="static/global.css">
     <style>
         :root {
-            /* Consistent structural color palette */
-            --primary-color: #d32f2f;
-            --primary-hover: #b71c1c;
-            --bg-color: #f4f6f9;
-            --card-bg: #ffffff;
-            --text-main: #212529;
-            --text-muted: #495057;
-            --border-color: #ced4da;
+            --bg-color: #0b0c10;
+            --card-bg: #11141a;
+            --primary-color: #ff3333;
+            --primary-hover: #ff0000;
+            --text-main: #f1f3f5;
+            --text-muted: #a6b0c0;
+            --border-color: #262d38;
 
-            /* Success State Theme Variables */
-            --success-color: #2e7d32;
-            --success-bg: #e8f5e9;
-            --success-border: #c8e6c9;
+            --success-color: #4caf50;
+            --success-bg: #101f11;
+            --success-border: #1b4d22;
         }
 
         body {
@@ -32,21 +31,25 @@
             align-items: center;
             min-height: 100vh;
             box-sizing: border-box;
+            position: relative;
+            overflow-x: hidden;
         }
 
         .container {
             background-color: var(--card-bg);
             padding: 50px 40px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
             max-width: 550px;
             width: 90%;
             text-align: center;
+            box-sizing: border-box;
         }
 
-        /* SVG Tick Animation Container */
         .tick-wrapper {
             height: 80px;
+            width: 80px;
             margin: 0 auto 25px auto;
             display: block;
         }
@@ -56,18 +59,16 @@
             height: 100%;
         }
 
-        /* The circle wrapper around the tick */
         .tick-circle {
             stroke: var(--success-color);
             stroke-width: 4;
-            stroke-miterlimit: 10;
             fill: none;
+            stroke-miterlimit: 10;
             stroke-dasharray: 166;
             stroke-dashoffset: 166;
             animation: draw-circle 0.6s cubic-bezier(0.39, 0.575, 0.565, 1) forwards;
         }
 
-        /* The actual tick path */
         .tick-check {
             transform-origin: 50% 50%;
             stroke: var(--success-color);
@@ -87,6 +88,7 @@
             margin-top: 0;
             margin-bottom: 12px;
             font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         .status-badge {
@@ -96,10 +98,10 @@
             border: 1px solid var(--success-border);
             padding: 4px 12px;
             border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 11px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.75px;
             margin-bottom: 20px;
         }
 
@@ -107,13 +109,15 @@
             font-size: 15px;
             color: var(--text-main);
             line-height: 1.6;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
-        /* Highlight notation display card */
         .notice-box {
-            background-color: #f8f9fa;
+            background-color: #161b22;
             border-left: 4px solid var(--primary-color);
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             padding: 16px;
             border-radius: 0 6px 6px 0;
             text-align: left;
@@ -124,9 +128,9 @@
             font-size: 13px;
             font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.5px;
         }
 
         .notice-text {
@@ -139,11 +143,10 @@
         hr {
             border: 0;
             height: 1px;
-            background: #e9ecef;
+            background: var(--border-color);
             margin: 25px 0;
         }
 
-        /* Redirect Control Links */
         .action-btn {
             display: block;
             width: 100%;
@@ -155,24 +158,70 @@
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(255, 51, 51, 0.2);
             transition: all 0.2s ease;
             text-decoration: none;
             box-sizing: border-box;
+            letter-spacing: 0.5px;
         }
 
         .action-btn:hover {
             background-color: var(--primary-hover);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 16px rgba(255, 51, 51, 0.35);
         }
 
         .action-btn:active {
             transform: scale(0.99);
         }
 
-        /* ========================================================
-           PURE CSS SVG ANIMATION KEYFRAMES
-           ======================================================== */
+        .attribution-footer {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            z-index: 100;
+            line-height: 1.5;
+        }
+
+        .attribution-copyright {
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .attribution-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .attribution-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.15s ease;
+        }
+
+        .attribution-links a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 650px) {
+            .attribution-footer {
+                position: static;
+                margin-top: 40px;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
+            .attribution-links {
+                justify-content: center;
+            }
+        }
+
         @keyframes draw-circle {
             100% {
                 stroke-dashoffset: 0;
@@ -200,28 +249,37 @@
 <div class="container">
     <div class="tick-wrapper">
         <svg class="tick-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-            <circle class="tick-circle" cx="26" cy="26" r="24" fill="none"/>
-            <path class="tick-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            <circle class="tick-circle" cx="26" cy="26" r="24"/>
+            <path class="tick-check" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
         </svg>
     </div>
 
-    <span class="status-badge">Pipeline Active</span>
+    <span class="status-badge">Successful</span>
     <h1>Prediction Request Submitted</h1>
 
     <p class="description">
-        Your prediction request has been submitted and is currently being processed. The server is cross-referencing real-time analytical parameters with historical NASA environmental layers.
+        Your prediction request has been submitted and is now being processed. The server will analyze the retrieved data and generate the wildfire risk prediction shortly.
     </p>
 
     <div class="notice-box">
         <div class="notice-title">Delivery Update</div>
         <p class="notice-text">
-            Because extracting and compiling time-series satellite layers requires intensive computation, processing runs entirely in the background. The final wildfire risk reports and predictive outputs will be delivered directly to your <b>provided email address</b> immediately upon completion.
+            Your wildfire prediction will be delivered to your provided email address in approximately 5–15 minutes after processing completes.
         </p>
     </div>
 
     <hr>
 
-    <a href="/task_form" class="action-btn">Configure Another Target Area</a>
+    <a href="/task_form" class="action-btn">Submit Another Prediction Request</a>
+</div>
+
+<div class="attribution-footer">
+    <div class="attribution-copyright">&copy; 2026 Devpriya Kulemannege</div>
+    <div class="attribution-links">
+        <a href="https://www.linkedin.com/in/devkulemannege/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://github.com/devkulemannege" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="mailto:devkulamannage@gmail.com">Email</a>
+    </div>
 </div>
 
 </body>

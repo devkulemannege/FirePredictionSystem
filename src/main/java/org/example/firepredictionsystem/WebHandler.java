@@ -10,7 +10,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
-import java.util.Enumeration; // debug package
 import java.util.HashMap;
 
 @Controller
@@ -68,11 +67,6 @@ public class WebHandler {
             return;
         }
         session.removeAttribute("password"); // immediately remove password from session storage
-
-        // TODO: debug. remove later
-//        HashMap<String,Object> map = new HashMap<>();
-//        map.put("token","abc");
-//        session.setAttribute("token", map);
     }
 
     @GetMapping("/get_token")
@@ -117,24 +111,21 @@ public class WebHandler {
 
         taskReply = new TaskHandler(client).submit_task(session, api);
 
+        if (taskReply.isEmpty()){
+            reply.put("status", "fail"); // if sending request failed, send json reply as "fail"
+            return reply;
+        }
+
         Object taskReplyObj = new JSONParser().parse(taskReply);
         JSONObject tokenReplyJson = (JSONObject) taskReplyObj;
-        String taskStatus = tokenReplyJson.get("status").toString();
+        String taskStatus = tokenReplyJson.get("status").toString(); // get status of the sent point request
 
         if (taskStatus.equals("pending") || taskStatus.equals("processing") || taskStatus.equals("done") || taskStatus.equals("queued")) {
-            reply.put("status", "success");
+            reply.put("status", "success"); // send success of the request was successful
         } else {
-            reply.put("status", "fail");
+            reply.put("status", "fail"); // else fail
         }
         return reply;
-
-//        Enumeration<String> attributeNames = session.getAttributeNames();
-//        while (attributeNames.hasMoreElements()) {
-//            String name = attributeNames.nextElement();
-//            Object value = session.getAttribute(name);
-//
-//            System.out.println(name + " = " + value);
-//        }
     }
 }
 

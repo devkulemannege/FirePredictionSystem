@@ -6,16 +6,15 @@
     <title>Forest Fire Prediction Tool</title>
     <style>
         :root {
-            /* Warm, alert, earth-inspired palette for fire analytics */
-            --primary-color: #d32f2f; /* Alert Red/Orange */
-            --primary-hover: #b71c1c;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-main: #212529;
-            --text-muted: #495057;
-            --border-color: #ced4da;
-            --disabled-color: #6c757d;
-            --disabled-bg: #e9ecef;
+            --bg-color: #0b0c10;
+            --card-bg: #11141a;
+            --primary-color: #ff3333;
+            --primary-hover: #ff0000;
+            --text-main: #f1f3f5;
+            --text-muted: #a6b0c0;
+            --border-color: #262d38;
+            --disabled-color: #4a5568;
+            --disabled-bg: #1a202c;
         }
 
         body {
@@ -23,31 +22,36 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 0;
+            padding: 40px 0 80px 0;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            box-sizing: border-box;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        /* Container to keep everything neat and centered */
         .container {
             background-color: var(--card-bg);
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            max-width: 600px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            max-width: 800px;
             width: 90%;
             text-align: left;
+            box-sizing: border-box;
         }
 
-        /* Typography */
         h1 {
             font-size: 26px;
-            color: #b71c1c;
+            color: var(--primary-color);
             margin-top: 0;
             margin-bottom: 10px;
             font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         .subtitle {
@@ -60,11 +64,10 @@
         hr {
             border: 0;
             height: 1px;
-            background: #e9ecef;
+            background: var(--border-color);
             margin: 25px 0;
         }
 
-        /* Description List Styles */
         .info-section {
             margin-bottom: 25px;
         }
@@ -87,7 +90,6 @@
             margin: 0;
         }
 
-        /* Credentials Form Section */
         .auth-section {
             margin-bottom: 25px;
         }
@@ -108,28 +110,25 @@
             width: 100%;
             padding: 10px 12px;
             font-size: 14px;
+            background-color: #161b22;
+            color: var(--text-main);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             box-sizing: border-box;
-            transition: border-color 0.15s ease-in-out;
+            transition: all 0.15s ease-in-out;
+        }
+
+        .input-group input::placeholder {
+            color: #57606a;
         }
 
         .input-group input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.15);
+            background-color: #1c212c;
+            box-shadow: 0 0 0 3px rgba(255, 51, 51, 0.25);
         }
 
-        /* Helper notation styling underneath the target inputs */
-        .input-helper {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 5px;
-            display: block;
-            line-height: 1.4;
-        }
-
-        /* The Simplistic Button */
         .retrieve-btn {
             display: block;
             width: 100%;
@@ -141,25 +140,21 @@
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(255, 51, 51, 0.2);
             transition: all 0.2s ease;
             letter-spacing: 0.5px;
             text-align: center;
         }
 
-        /* Hover effect (Only applies when button is not disabled) */
         .retrieve-btn:not(:disabled):hover {
             background-color: var(--primary-hover);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 16px rgba(255, 51, 51, 0.35);
         }
 
-        /* Active effect */
         .retrieve-btn:not(:disabled):active {
             transform: scale(0.99);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        /* Disabled State (Default/Greyed out) */
         .retrieve-btn:disabled {
             background-color: var(--disabled-bg);
             color: var(--disabled-color);
@@ -169,32 +164,80 @@
             transform: none;
         }
 
-        /* Loading state style */
         .retrieve-btn.loading {
-            background-color: #6c757d;
-            color: #ffffff;
+            background-color: #2d3748;
+            color: #a0aec0;
             cursor: not-allowed;
             pointer-events: none;
+            box-shadow: none;
+        }
+
+        .attribution-footer {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            z-index: 100;
+            line-height: 1.5;
+        }
+
+        .attribution-copyright {
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .attribution-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .attribution-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.15s ease;
+        }
+
+        .attribution-links a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 650px) {
+            .attribution-footer {
+                position: static;
+                margin-top: 40px;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
+            .attribution-links {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Welcome to the Forest Fire Prediction Portal</h1>
-    <p class="subtitle">Generate localized wildfire risk and predictive forecasts for your selected coordinate point using historical and real-time NASA environmental data layers.</p>
+    <h1>Welcome to the Forest Fire Prediction System</h1>
+    <p class="subtitle">Utilize NASA's environmental data to analyze current conditions and historical patterns, generating predictive wildfire risk forecasts for specific locations through machine learning and environmental data analysis.</p>
 
     <hr>
 
     <div class="info-section">
         <div class="info-item">
-            <div class="info-title">Predictive Data Retrieval</div>
-            <p class="info-text">Clicking the button below securely passes your credentials to NASA AppEEARS to request the critical point-sample variables (such as Land Surface Temperature and vegetation health indices) needed for the fire prediction model. <b>Your credentials will not be stored.</b></p>
+            <div class="info-title">Environmental Data Retrieval</div>
+            <p class="info-text">Clicking the button securely connects to NASA AppEEARS using your credentials to retrieve key environmental variables, including land surface temperature and tree density, required for wildfire prediction. <b>Your credentials are used only for this request and are not stored.</b></p>
         </div>
 
         <div class="info-item">
             <div class="info-title">Processing Notice</div>
-            <p class="info-text">Because extracting time-series satellite layers takes a few moments on NASA's servers, a background extraction task will be generated. The system will automatically feed this data into the predictive pipeline once complete.</p>
+            <p class="info-text">Because extracting time-series satellite data from NASA’s servers can take some time, a background task will be created to handle the process. Once the data is ready, it will be used to generate the wildfire prediction, which may also take a short while to complete. The final results will be sent to the email address entered below.</p>
         </div>
     </div>
 
@@ -209,23 +252,30 @@
         </div>
         <div class="input-group">
             <label for="email">Notification Email</label>
-            <input type="email" id="email" placeholder="e.g., user@example.com" required>
-            <span class="input-helper">The final wildfire risk report and predictive outputs will be delivered directly to this email address once background computation wraps up.</span>
+            <input type="email" id="email" placeholder="user@example.com" oninput="validateForm()" required>
         </div>
     </div>
 
     <button class="retrieve-btn" id="retrieveBtn" onclick="handleRetrieveData()" disabled>Retrieve Data</button>
 </div>
 
+<div class="attribution-footer">
+    <div class="attribution-copyright">&copy; 2026 Devpriya Kulemannege</div>
+    <div class="attribution-links">
+        <a href="https://www.linkedin.com/in/devkulemannege/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://github.com/devkulemannege" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="mailto:devkulamannage@gmail.com">Email</a>
+    </div>
+</div>
+
 <script>
-    // Form validator: requires both fields to be filled out
+    // Form field presence structural validator logic
     function validateForm() {
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();
         const email = document.getElementById('email').value.trim();
         const btn = document.getElementById('retrieveBtn');
 
-        // Note: HTML button uses 'disabled', not 'enabled' attribute
         if (username !== "" && password !== "" && email !== "") {
             btn.removeAttribute('disabled');
         } else {
@@ -233,25 +283,21 @@
         }
     }
 
-    // ADDED 'async' HERE so await can function properly
+    // Pipeline ingestion communication handler method
     async function handleRetrieveData() {
         const btn = document.getElementById('retrieveBtn');
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();
         const email = document.getElementById('email').value.trim();
 
-        // Add loading state
         btn.classList.add('loading');
         btn.textContent = 'Fetching Environmental Data...';
 
-        console.log("Initiating AppEEARS access token request");
-
         try {
-            // Request data from your backend route, passing credentials along
             const reply = await fetch('/request_api_data', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ // send username and password through json
+                body: JSON.stringify({
                     username: username,
                     password: password,
                     email: email
@@ -259,7 +305,7 @@
             });
 
             if (reply.ok) {
-                window.location.href = "/task_form"; // go to web page with the point extraction form
+                window.location.href = "/task_form";
             } else {
                 alert('Failed to contact server. Please check credentials or backend status.');
             }
@@ -267,7 +313,6 @@
             console.error("Error fetching data:", error);
             alert('An error occurred while connecting to the predictive pipeline.');
         } finally {
-            // Revert button state whether the API call succeeds or fails
             btn.classList.remove('loading');
             btn.textContent = 'Retrieve Data';
         }
