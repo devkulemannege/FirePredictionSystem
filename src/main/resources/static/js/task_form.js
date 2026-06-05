@@ -8,6 +8,21 @@ function toggleTokenObfuscation() {
     display.classList.toggle('is-blurred');
 }
 
+// Restrict date input to past or current dates only
+function restrictFutureDates() {
+    const dateInput = document.getElementById('targetDate');
+    const today = new Date();
+
+    const year = today.getFullYear();
+    // Months are 0-indexed, so pad start with a leading zero if needed
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+
+    // Format must perfectly match YYYY-MM-DD
+    const maxDate = `${year}-${month}-${day}`;
+    dateInput.setAttribute('max', maxDate);
+}
+
 // Preset alert modal
 function presentStatusModal(title, message, visualVariant = 'error', postCloseRoute = null) {
     const overlay = document.getElementById('statusModal');
@@ -35,26 +50,14 @@ function dismissModal() {
     }
 }
 
-// functions
+/***************************************************
+ * backend to frontend transaction control functions
+ * *************************************************/
+
 // Convert from (YYYY-MM-DD) to (MM-DD-YYYY)
 function reformatDate(dateString) {
     const [year, month, day] = dateString.split('-');
     return `${month}-${day}-${year}`;
-}
-
-// Restrict date input to past or current dates only
-function restrictFutureDates() {
-    const dateInput = document.getElementById('targetDate');
-    const today = new Date();
-
-    const year = today.getFullYear();
-    // Months are 0-indexed, so pad start with a leading zero if needed
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-
-    // Format must perfectly match YYYY-MM-DD
-    const maxDate = `${year}-${month}-${day}`;
-    dateInput.setAttribute('max', maxDate);
 }
 
 // Authorization processing script engine
@@ -116,7 +119,7 @@ async function handleFormSubmit(event) {
 
     const btn = document.getElementById('submitBtn');
     btn.classList.add('loading');
-    btn.textContent = 'Sending Data...';
+    btn.textContent = 'Sending Request...';
 
     const taskName = document.getElementById('taskName').value.trim();
     const lat = parseFloat(document.getElementById('latitude').value);
@@ -144,15 +147,15 @@ async function handleFormSubmit(event) {
                 window.location.href = "/fail_page";
             } else {
                 presentStatusModal(
-                    "Pipeline Interrupted",
-                    "An unexpected error occurred. Please try again.",
+                    "Submission Error",
+                    "The server returned an unrecognized response. Please try again..",
                     "error"
                 );
             }
         } else {
             presentStatusModal(
                 "Submission Error",
-                "An unexpected error occurred. Please try again.",
+                "An unexpected error occurred trying to proceed to next page. Please try again",
                 "error"
             );
         }
@@ -160,7 +163,7 @@ async function handleFormSubmit(event) {
     } catch (error) {
         console.error("Transmission Failure:", error);
         presentStatusModal(
-            "Pipeline Interrupted",
+            "Submission Error",
             "An unexpected error occurred. Please try again.",
             "error"
         );
