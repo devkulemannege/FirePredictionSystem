@@ -25,7 +25,8 @@ public class TaskHandler {
                         "longitude": "%s"}],
                 "dates": [{"endDate": "%s", "startDate": "%s"}],
                 "layers": [{"layer": "LST_Day_1km", "product": "MOD11A2.061"},
-            {"layer": "LST_Night_1km", "product": "MOD11A2.061"}]},
+            {"layer": "_1_km_16_days_NDVI", "product": "MOD13A2.061"},
+            {"layer": "sur_refl_b05", "product": "MOD09A1.061"}]},
                 "task_name": "%s",
                 "task_type": "point"}
             """,session.getAttribute("latitude"),

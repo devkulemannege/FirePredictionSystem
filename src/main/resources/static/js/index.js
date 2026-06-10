@@ -3,8 +3,26 @@ function validateForm() {
     const password = document.getElementById('password').value.trim();
     const email = document.getElementById('email').value.trim();
     const btn = document.getElementById('retrieveBtn');
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('emailError');
 
-    if (username !== "" && password !== "" && email !== "") {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const isEmailValid = emailRegex.test(email);
+
+    if (email !== '' && !isEmailValid) {
+        emailInput.style.borderColor = '#ff4d4d';
+        emailInput.style.outline = 'none';
+        emailError.style.display = 'block';
+    } else if (email !== '' && isEmailValid) {
+        emailInput.style.borderColor = '#4caf50';
+        emailInput.style.outline = 'none';
+        emailError.style.display = 'none';
+    } else {
+        emailInput.style.borderColor = '';
+        emailError.style.display = 'none';
+    }
+
+    if (username !== '' && password !== '' && isEmailValid) {
         btn.removeAttribute('disabled');
     } else {
         btn.setAttribute('disabled', 'true');

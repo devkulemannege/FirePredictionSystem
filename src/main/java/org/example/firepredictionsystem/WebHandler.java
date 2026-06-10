@@ -103,12 +103,12 @@ public class WebHandler {
                 Integer.parseInt(session.getAttribute("endDate").toString().split("-")[2])
         };
         LocalDate date = LocalDate.of(splitDate[2], splitDate[0], splitDate[1]);
+        date = date.minusYears(3); // subtract 3 years
 
-        date = date.minusDays(7); // subtract 8 days (inclusive)
         session.setAttribute("startDate", String.format("%s-%s-%s",
                 String.format("%02d", date.getMonthValue()), String.format("%02d", date.getDayOfMonth()), date.getYear()));
 
-
+        // handle transmission of point request and send to appeears
         taskReply = new TaskHandler(client).submit_task(session, api);
 
         if (taskReply.isEmpty()){
