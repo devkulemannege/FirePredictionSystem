@@ -4,18 +4,24 @@ import jakarta.servlet.http.HttpSession;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class WebHandler {
     public final RestClient client = RestClient.create();
     public final String api = "https://appeears.earthdatacloud.nasa.gov/api/";
+
+    // retrieve env variables through application.properties
+    @Value("${api.usr}") private String API_USR;
+    @Value("${api.psw}") private String API_PSW;
+    @Value("${api.url}") private String API_URL;
 
     @GetMapping("/")
 	public String index(HttpSession session) {
@@ -44,7 +50,7 @@ public class WebHandler {
 
     @PostMapping("/request_api_data")
     @ResponseBody
-    public void request_api_data(@RequestBody HashMap<String, String> user, HttpSession session) {
+    public void request_api_data(@RequestBody Map<String, String> user, HttpSession session) {
         /* initialize connection with AppEEARS and retrieve usable access token.
         * save required information in session variables to handle user concurrency */
 
@@ -74,9 +80,7 @@ public class WebHandler {
     public Object get_token(HttpSession session) {
         /* send access token (JSON object) to the front end when required */
         if (session.getAttribute("token").toString().equals("unauthorized")) {
-            HashMap<String, String> reply = new HashMap<>();
-            reply.put("token","unauthorized");
-            return reply;
+            return Map.of("token", "unauthorized");
         } else {
             return session.getAttribute("token");
         }
@@ -84,10 +88,9 @@ public class WebHandler {
 
     @PostMapping("/prepare_task")
     @ResponseBody
-    public HashMap<String, String> prepare_task(@RequestBody HashMap<String, String> request, HttpSession session) throws ParseException {
+    public Map<String, String> prepare_task(@RequestBody Map<String, String> request, HttpSession session) throws ParseException {
         /* format JSON request into applicable format and sent to AppEEARs for requesting for data */
         // initialize variables
-        HashMap<String, String> reply = new HashMap<>();
         String taskReply;
 
         session.setAttribute("taskName", request.get("taskName"));
@@ -95,7 +98,7 @@ public class WebHandler {
         session.setAttribute("longitude", request.get("longitude"));
         session.setAttribute("endDate",  request.get("date"));
 
-        // subtract 8 days inclusive of endDate, from specified date for multi-date data retrieval.
+        // subtract 3 years inclusive of endDate, from specified date for yearly data retrieval.
         // reformat the positions of values as required
         int[] splitDate = {
                 Integer.parseInt(session.getAttribute("endDate").toString().split("-")[0]),
@@ -112,20 +115,40 @@ public class WebHandler {
         taskReply = new TaskHandler(client).submit_task(session, api);
 
         if (taskReply.isEmpty()){
-            reply.put("status", "fail"); // if sending request failed, send json reply as "fail"
-            return reply;
+            return Map.of("status","fail"); // if sending request failed, send json reply as "fail"
         }
 
         Object taskReplyObj = new JSONParser().parse(taskReply);
         JSONObject tokenReplyJson = (JSONObject) taskReplyObj;
         String taskStatus = tokenReplyJson.get("status").toString(); // get status of the sent point request
+        String taskId = tokenReplyJson.get("task_id").toString(); // get task id of the submitted point request
 
         if (taskStatus.equals("pending") || taskStatus.equals("processing") || taskStatus.equals("done") || taskStatus.equals("queued")) {
-            reply.put("status", "success"); // send success of the request was successful
+            // handle transmission of data per user to python prediction server
+
+            String requestReply = new PredictionRequestHandler(client).submit_request(
+                    session,
+                    session.getAttribute("token").toString(),
+                    taskId,
+                    session.getAttribute("email").toString(),
+                    API_USR, API_PSW, API_URL
+            );
+
+            if (requestReply.isEmpty()){
+                return Map.of("status","pred_fail"); // fail flag for prediction
+            } else {
+                Object requestReplyObj = new JSONParser().parse(requestReply);
+                JSONObject requestReplyJson = (JSONObject) requestReplyObj;
+
+                if (requestReplyJson.get("status").toString().equals("ok")) { // check if predictions erver returned ok
+                    return Map.of("status","success"); // send success of the request was successful
+                } else {
+                    return Map.of("status","fail"); // else fail
+                }
+            }
         } else {
-            reply.put("status", "fail"); // else fail
+            return Map.of("status","fail"); // else fail
         }
-        return reply;
     }
 }
 
