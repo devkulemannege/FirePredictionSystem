@@ -43,7 +43,14 @@ public class PredictionRequestHandler {
                     .body(payload)
                     .retrieve()
                     .body(String.class);
-        } catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException.TooManyRequests e){
+            // if a 429 error is returned from server, return json with appropriate status
+            request_reply = """
+                {
+                  "status": "too_many_requests",
+                }
+                """;
+        } catch (Exception e) {
             System.out.printf("%s | %s%n", session.getAttribute("username").toString(), e.getMessage());
             //session.invalidate(); // clear session variables to allow new values to be assigned TODO: uncomment for production
             request_reply = "";

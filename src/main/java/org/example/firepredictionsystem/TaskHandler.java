@@ -15,7 +15,7 @@ public class TaskHandler {
     }
 
     public String submit_task(HttpSession session, String api) throws ParseException {
-        // ---- TODO: dummy return for testing. remove for production ----
+        // ---- dummy return for testing. TODO: remove for production ----
         return """
             {"status": "pending", "task_id": "dummy-task-id-12345"}
             """;

@@ -98,7 +98,7 @@ public class WebHandler {
         session.setAttribute("longitude", request.get("longitude"));
         session.setAttribute("endDate",  request.get("date"));
 
-        // subtract 3 years inclusive of endDate, from specified date for yearly data retrieval.
+        // subtract 16 days inclusive of endDate, from specified date for yearly data retrieval.
         // reformat the positions of values as required
         int[] splitDate = {
                 Integer.parseInt(session.getAttribute("endDate").toString().split("-")[0]),
@@ -106,7 +106,7 @@ public class WebHandler {
                 Integer.parseInt(session.getAttribute("endDate").toString().split("-")[2])
         };
         LocalDate date = LocalDate.of(splitDate[2], splitDate[0], splitDate[1]);
-        date = date.minusYears(3); // subtract 3 years
+        date = date.minusDays(15); // subtract 16 days
 
         session.setAttribute("startDate", String.format("%s-%s-%s",
                 String.format("%02d", date.getMonthValue()), String.format("%02d", date.getDayOfMonth()), date.getYear()));
@@ -142,8 +142,10 @@ public class WebHandler {
 
                 if (requestReplyJson.get("status").toString().equals("ok")) { // check if predictions erver returned ok
                     return Map.of("status","success"); // send success of the request was successful
+                } else if (requestReplyJson.get("status").toString().equals("too_many_requests")){
+                    return Map.of("status","limited"); // else if rate limited
                 } else {
-                    return Map.of("status","fail"); // else fail
+                    return Map.of("status","failed"); // finally else failed
                 }
             }
         } else {

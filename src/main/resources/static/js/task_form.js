@@ -148,7 +148,13 @@ async function handleFormSubmit(event) {
             } else if (data.status === "pred_fail") {
                 presentStatusModal(
                     "Unable to reach Prediction Server",
-                    "Your point request has been successfully submitted to NASA AppEEARS, but the prediction server could not be reached to process the results at this time. Please try again later.\"",
+                    "Your point request has been successfully submitted to NASA AppEEARS, but the prediction server could not be reached to process the results at this time. Please try again later.",
+                    "error"
+                );
+            } else if (data.status === "limited"){
+                presentStatusModal(
+                    "Daily Limit Reached",
+                    "Daily request limit of 10 has been reached. Please try again after the 24 hours.",
                     "error"
                 );
             } else {
