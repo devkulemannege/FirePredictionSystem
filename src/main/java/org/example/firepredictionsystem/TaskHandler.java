@@ -15,13 +15,6 @@ public class TaskHandler {
     }
 
     public String submit_task(HttpSession session, String api) throws ParseException {
-        // ---- dummy return for testing. TODO: remove for production ----
-//        return """
-//            {"status": "pending", "task_id": "dummy-id-123"}
-//            """;
-        // -------------------------------------------------------------
-
-
         /* use prepared session variables to construct json payload
          * send POST request to AppEEARS */
         String taskReply;
