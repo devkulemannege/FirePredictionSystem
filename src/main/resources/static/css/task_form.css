@@ -24,6 +24,7 @@ body {
     margin: 0;
     padding: 40px 0;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
@@ -63,13 +64,14 @@ h1 {
     background-color: var(--token-bg);
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    padding: 12px 16px;
+    padding: 14px 16px;
     margin-bottom: 20px;
     font-size: 14px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .token-label {
@@ -84,7 +86,7 @@ h1 {
     cursor: pointer;
     overflow: hidden;
     border-radius: 4px;
-    padding: 2px 6px;
+    padding: 4px 8px;
     margin-left: 10px;
     display: inline-flex;
     align-items: center;
@@ -121,7 +123,7 @@ h1 {
     font-size: 12px;
     font-weight: 600;
     color: #81c784;
-    background-color: rgba(16, 31, 17, 0.6);
+    background-color: rgba(16, 31, 17, 0.85);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease;
@@ -159,9 +161,14 @@ h1 {
     font-size: 13px;
     font-weight: 600;
     color: var(--text-main);
-    margin: 0;
+    margin: 0 0 5px 0;
 }
 
+.label-row label {
+    margin-bottom: 0;
+}
+
+/* Tooltip UI Engines */
 .tooltip-wrapper {
     position: relative;
     display: inline-flex;
@@ -170,8 +177,8 @@ h1 {
 }
 
 .tooltip-trigger {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     background-color: #161b22;
     border: 1px solid var(--border-color);
@@ -242,8 +249,8 @@ h1 {
 }
 
 .input-group input {
-    padding: 10px 12px;
-    font-size: 14px;
+    padding: 12px;
+    font-size: 16px; /* 16px prevents iOS automated visual zoom disruptions on layout field selection */
     background-color: #161b22;
     color: var(--text-main);
     border: 1px solid var(--border-color);
@@ -269,7 +276,7 @@ h1 {
     background-color: var(--primary-color);
     color: #ffffff;
     border: none;
-    padding: 14px 28px;
+    padding: 16px 28px;
     font-size: 16px;
     font-weight: 600;
     border-radius: 6px;
@@ -279,6 +286,7 @@ h1 {
     letter-spacing: 0.5px;
     text-align: center;
     margin-top: 10px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .submit-btn:hover {
@@ -304,7 +312,7 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -312,6 +320,8 @@ h1 {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease, visibility 0.2s ease;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .modal-overlay.active {
@@ -321,15 +331,16 @@ h1 {
 
 .modal-box {
     background-color: var(--card-bg);
-    padding: 32px;
+    padding: 32px 24px;
     border-radius: 10px;
     border: 1px solid var(--border-color);
     max-width: 450px;
-    width: 85%;
+    width: 100%;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
     text-align: center;
     transform: scale(0.95) translateY(15px);
     transition: transform 0.2s ease;
+    box-sizing: border-box;
 }
 
 .modal-overlay.active .modal-box {
@@ -364,12 +375,14 @@ h1 {
 .modal-close-btn {
     color: #ffffff;
     border: none;
-    padding: 10px 28px;
+    padding: 12px 32px;
     font-size: 14px;
     font-weight: 600;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.15s ease;
+    width: 100%;
+    max-width: 200px;
 }
 
 .modal-box.success-variant {
@@ -435,6 +448,7 @@ h1 {
     text-decoration: none;
     font-weight: 500;
     transition: color 0.15s ease;
+    padding: 4px 0;
 }
 
 .attribution-links a:hover {
@@ -445,20 +459,60 @@ h1 {
     color: #6c7a8e;
 }
 
+/* Fluid Mobile Adaptation Rules Engine */
 @media (max-width: 650px) {
+    body {
+        padding: 20px 0 40px 0;
+        justify-content: flex-start;
+    }
+
+    .container {
+        padding: 24px 20px;
+        width: 92%;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .full-width {
+        grid-column: span 1;
+    }
+
+    .token-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .token-label {
+        width: 100%;
+    }
+
+    .token-wrapper-interactive {
+        margin-left: 0;
+        padding: 4px 0;
+        max-width: 100%;
+        justify-content: flex-start;
+    }
+
     .attribution-footer {
-        position: static;
-        margin-top: 60px;
+        position: relative;
+        bottom: auto;
+        left: auto;
+        margin-top: 40px;
         padding-left: 0;
         border-left: none;
         align-items: center;
         width: 100%;
         text-align: center;
-        gap: 10px;
+        gap: 12px;=
     }
+
     .attribution-links {
         justify-content: center;
         flex-wrap: wrap;
-        gap: 14px;
+        gap: 16px;
     }
 }

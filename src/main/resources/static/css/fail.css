@@ -19,6 +19,7 @@ body {
     margin: 0;
     padding: 40px 0;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
@@ -79,6 +80,27 @@ body {
 .line-2 {
     animation: draw-cross-line 0.25s cubic-bezier(0.65, 0, 0.45, 1) 0.65s forwards,
     scale-bounce 0.4s ease-in-out 0.9s;
+}
+
+@keyframes draw-circle {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes draw-cross-line {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes scale-bounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.12);
+    }
 }
 
 h1 {
@@ -152,7 +174,7 @@ hr {
     background-color: var(--primary-color);
     color: #ffffff;
     border: none;
-    padding: 14px 28px;
+    padding: 16px 28px;
     font-size: 15px;
     font-weight: 600;
     border-radius: 6px;
@@ -162,6 +184,7 @@ hr {
     text-decoration: none;
     box-sizing: border-box;
     letter-spacing: 0.5px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .action-btn:hover {
@@ -205,6 +228,7 @@ hr {
     text-decoration: none;
     font-weight: 500;
     transition: color 0.15s ease;
+    padding: 4px 0;
 }
 
 .attribution-links a:hover {
@@ -215,41 +239,34 @@ hr {
     color: #6c7a8e;
 }
 
+/* Consolidated Fluid Screen Breakpoint Engine */
 @media (max-width: 650px) {
+    body {
+        padding: 20px 0 40px 0;
+        justify-content: flex-start;
+    }
+
+    .container {
+        padding: 36px 20px;
+        width: 92%;
+    }
+
     .attribution-footer {
-        position: static;
-        margin-top: 60px;
+        position: relative;
+        bottom: auto;
+        left: auto;
+        margin-top: 40px;
         padding-left: 0;
         border-left: none;
         align-items: center;
         width: 100%;
         text-align: center;
-        gap: 10px;
+        gap: 12px;
     }
+
     .attribution-links {
         justify-content: center;
         flex-wrap: wrap;
-        gap: 14px;
-    }
-}
-
-@keyframes draw-circle {
-    100% {
-        stroke-dashoffset: 0;
-    }
-}
-
-@keyframes draw-cross-line {
-    100% {
-        stroke-dashoffset: 0;
-    }
-}
-
-@keyframes scale-bounce {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.12);
+        gap: 16px;
     }
 }
