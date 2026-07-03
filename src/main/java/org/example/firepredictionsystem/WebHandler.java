@@ -98,7 +98,7 @@ public class WebHandler {
         session.setAttribute("longitude", request.get("longitude"));
         session.setAttribute("endDate",  request.get("date"));
 
-        // subtract 16 days inclusive of endDate, from specified date for yearly data retrieval.
+        // subtract 30 days inclusive of endDate, from specified date for yearly data retrieval.
         // reformat the positions of values as required
         int[] splitDate = {
                 Integer.parseInt(session.getAttribute("endDate").toString().split("-")[0]),
@@ -106,7 +106,7 @@ public class WebHandler {
                 Integer.parseInt(session.getAttribute("endDate").toString().split("-")[2])
         };
         LocalDate date = LocalDate.of(splitDate[2], splitDate[0], splitDate[1]);
-        date = date.minusDays(15); // subtract 16 days
+        date = date.minusDays(30); // subtract 30 days
 
         session.setAttribute("startDate", String.format("%s-%s-%s",
                 String.format("%02d", date.getMonthValue()), String.format("%02d", date.getDayOfMonth()), date.getYear()));
