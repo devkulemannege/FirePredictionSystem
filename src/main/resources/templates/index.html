@@ -15,23 +15,33 @@
     <hr>
 
     <div class="info-section">
-        <div class="info-item" style="background-color: #161b22; border: 1px solid var(--border-color); border-left: 4px solid var(--primary-color); padding: 16px; border-radius: 4px; margin-bottom: 20px;">
-            <div class="info-title" style="color: var(--primary-color); font-weight: 700; font-size: 13.5px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Earthdata Account Required</div>
-            <p class="info-text" style="color: var(--text-main); font-size: 14px; line-height: 1.5; margin: 0;">
+        <div class="critical-notice-banner">
+            <div class="banner-header">
+                <div class="info-title">Earthdata Account Required</div>
+            </div>
+            <p class="info-text">
                 In order to proceed, a NASA Earthdata account is required to securely access data from AppEEARS.
                 If you do not have an account, you can create one
-                <a href="https://urs.earthdata.nasa.gov/users/new" target="_blank" rel="noopener noreferrer" style="color: #ff4d4d; font-weight: 600; text-decoration: none;">here</a>.
+                <a href="https://urs.earthdata.nasa.gov/users/new" target="_blank" rel="noopener noreferrer">here</a>.
             </p>
         </div>
 
-        <div class="info-item">
-            <div class="info-title">Environmental Data Retrieval</div>
-            <p class="info-text">Clicking the button below securely connects to NASA AppEEARS using your Earthdata account credentials to retrieve key environmental variables, such as land surface temperature and tree density, required for wildfire prediction. <b>Your credentials are used only for this request and are not stored.</b></p>
-        </div>
+        <div class="info-grid-split">
+            <div class="info-card">
+                <div class="card-header">
+                    <span class="card-icon">𖥔</span>
+                    <div class="info-title">Environmental Data Retrieval</div>
+                </div>
+                <p class="info-text">Clicking the button below securely connects to NASA AppEEARS using your Earthdata account credentials to retrieve key environmental variables, such as land surface temperature and tree density. <b>Your credentials are used only for this request and are not stored.</b></p>
+            </div>
 
-        <div class="info-item">
-            <div class="info-title">Processing Notice</div>
-            <p class="info-text">Because extracting time-series satellite data from NASA’s servers can take some time, a background task will be created to handle the process. Once the data is ready, it will be used to generate the wildfire prediction, which may also take a short while to complete. The final results will be sent to the email address entered below.</p>
+            <div class="info-card">
+                <div class="card-header">
+                    <span class="card-icon">⌛︎</span>
+                    <div class="info-title">Processing Notice</div>
+                </div>
+                <p class="info-text">Because extracting time-series satellite data can take some time, a background task will handle the pipeline. Once ready, it generates the wildfire prediction matrix. The final analytical results will be sent directly to the notification email address entered below.</p>
+            </div>
         </div>
     </div>
 
