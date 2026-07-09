@@ -69,6 +69,7 @@ public class WebHandler {
                     .retrieve()
                     .body(String.class));
         } catch (HttpClientErrorException e) {
+            System.out.printf("%s | %s%n", session.getAttribute("username").toString(), e.getMessage());
             session.setAttribute("token", "unauthorized");
             return;
         }
