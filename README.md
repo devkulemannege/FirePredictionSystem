@@ -1,4 +1,7 @@
-# Fire Prediction System
+<h1 align="left">
+  Fire Prediction System
+  <img src="assets\mdi_fire.png" width="50" align="right" />
+</h1>
 
 A Spring Boot web application that collects a NASA Earthdata login, submits a geospatial point-extraction task to NASA AppEEARS, and forwards the resulting task metadata to a remote prediction service for wildfire-risk analysis.
 
